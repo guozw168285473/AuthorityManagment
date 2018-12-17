@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lnlic.technic.dao.SysOrgDao">
+
+
+    <insert id="addSysOrg" parameterType="com.lnlic.technic.domain.SysOrg">
+        INSERT INTO sys_org(
+          org_id,
+          parent_org_id,
+          org_name,
+          order_num,
+          fzr,
+          lxdh,
+          email,
+          create_time,
+          update_time,
+          remark,
+          del_flag,
+          org_status
+        )VALUES (
+          #{org_id, jdbcType=VARCHAR},
+          #{parent_org_id, jdbcType=VARCHAR},
+          #{org_name, jdbcType=VARCHAR},
+          #{order_num, jdbcType=INTEGER},
+          #{fzr, jdbcType=VARCHAR},
+          #{lxdh, jdbcType=VARCHAR},
+          #{email, jdbcType=VARCHAR},
+          sysdate,
+          sysdate,
+          #{remark, jdbcType=VARCHAR},
+          #{del_flag, jdbcType=VARCHAR},
+          #{org_status, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateSysOrg" parameterType="com.lnlic.technic.domain.SysOrg">
+        update sys_org
+        <trim prefix="set" suffixOverrides=",">
+            <if test="parent_org_id != null and parent_org_id != ''">
+                parent_org_id = #{parent_org_id, jdbcType=VARCHAR},
+            </if>
+            <if test="org_name != null and org_name != ''">
+                org_name = #{org_name, jdbcType=VARCHAR},
+            </if>
+            <if test="order_num != null and order_num != ''">
+                order_num = #{order_num, jdbcType=INTEGER},
+            </if>
+            <if test="fzr != null and fzr != ''">
+                fzr = #{fzr, jdbcType=VARCHAR},
+            </if>
+            <if test="lxdh != null and lxdh != ''">
+                lxdh = #{lxdh, jdbcType=VARCHAR},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="del_flag != null and del_flag != ''">
+                del_flag = #{del_flag, jdbcType=CHAR},
+            </if>
+            <if test="org_status != null and org_status != ''">
+                org_status = #{org_status, jdbcType=CHAR},
+            </if>
+            <if test="1 == 1">
+                update_time = sysdate,
+            </if>
+        </trim>
+        WHERE org_id = #{org_id, jdbcType=VARCHAR}
+    </update>
+
+    <select id="getSysOrgList" parameterType="com.lnlic.technic.domain.SysOrg" resultType="com.lnlic.technic.domain.SysOrg">
+        SELECT * FROM sys_org a
+        order by a.order_num
+    </select>
+
+    <select id="getSysOrgObj" parameterType="java.util.HashMap" resultType="com.lnlic.technic.domain.SysOrg">
+        select * from sys_org a inner join sys_org_user b on a.org_id = b.org_id
+        <where>
+            <if test="user_id != null and user_id != ''">
+                b.user_id = #{user_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getSysOrgObj2nd" parameterType="com.lnlic.technic.domain.SysOrg" resultType="com.lnlic.technic.domain.SysOrg">
+        select a.*, (select org_name from sys_org b where b.org_id = a.parent_org_id) parent_org_name from sys_org a
+        <where>
+            <if test="org_id != null and org_id != ''">
+                a.org_id = #{org_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+</mapper>

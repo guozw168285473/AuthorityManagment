@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Document</title>
+	<script src="js/jquery.js"></script>
+	<!--校验表单-->
+	<link rel="stylesheet" media="screen" href="css/core.css">
+	<script type="text/javascript" src="js/jquery.validate.js"></script>
+	<script type="text/javascript" src="js/messages_zh.js"></script>
+	<script type="text/javascript" src="js/additional-methods.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$(".form-validation").validate({
+			debug:true //不提交
+		});
+	
+	});
+	</script>	
+</head>
+<body>
+<form method="post" action="" class="form-horizontal form-validation" role="form-add">
+	<div class="form-group">
+	    <label class="col-md-3 control-label">手机:</label>
+	    <div class="col-md-8">
+<input id="phone" name="phone" class="form-control" data-rule-required="true" data-msg-required="请输入手机号" data-rule-isPhone="true" data-msg-isPhone="格式不对"/>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">时间:</label>
+	    <div class="col-md-8">
+<input id="time" name="time" class="form-control" data-rule-required="true" data-msg-required="请输入时间" data-rule-time="true" data-msg-time="00:00-23:59"/>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">姓名:</label>
+	    <div class="col-md-8">
+<input id="username" name="username" class="form-control" data-rule-required="true" data-msg-required="请输入姓名" data-rule-minlength="4" data-msg-rangelength="长度最少4位"/>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">密码:</label>
+	    <div class="col-md-8">
+<input id="password" name="password" class="form-control" data-rule-required="true" data-msg-required="请输入密码" data-rule-rangelength="[2,10]" data-msg-rangelength="用户名长度必须是2到10个字符"/>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">再次输入密码:</label>
+	    <div class="col-md-8">
+<input id="password2" class="form-control" name="password2" data-rule-required="true" data-msg-required="请再次输入密码" data-rule-equalTo="#password" data-msg-equalTo="两次密码不一致"/>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">E-mail:</label>
+	    <div class="col-md-8">
+<input id="cemail" class="form-control" name="email" data-rule-required="true" data-rule-email="true" data-msg-required="请输入您的电子邮件地址" data-msg-email="请输入一个有效的电子邮件地址" />
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">区域:</label>
+	    <div class="col-md-8">
+<textarea id="area" class="form-control" name="area" data-msg-required="请输入区域名" data-rule-required="true"></textarea>
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">radio:</label>
+	    <div class="col-md-8">
+<input type="radio" name="radio" value="我是海" data-msg-required="请选择" data-rule-required="true" />
+<input type="radio" name="radio" value="我是云" />
+	    </div>
+	</div>
+	<div class="form-group">
+	    <label class="col-md-3 control-label">checkbox:</label>
+	    <div class="col-md-8">
+<input id="check" type="checkbox" name="check" data-msg-required="请选择" data-rule-required="true" />
+	    </div>
+	</div>
+	<div class="form-group">
+		<button class="btn btn-primary">校验</button>
+	</div>
+</form>
+</body>
+</html>

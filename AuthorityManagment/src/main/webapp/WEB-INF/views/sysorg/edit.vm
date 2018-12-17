@@ -1,0 +1,136 @@
+#set($layout = "layout/default.vm")
+<script>
+    var layer, form;
+	$(document).ready(function() {
+
+        if (GetQuery("org_id")) {
+            initForm()
+        }
+
+
+        layui.use(['form', 'layer'], function() {
+            form = layui.form;
+            layer = layui.layer;
+
+            //渲染
+            form.render();
+        })
+
+
+
+
+        $("#parent_org_name").click(function() {
+            layer.open({
+                title: "请选择上级部门",
+                type: 2,//iframe层
+                area: ['300px', '450px'],
+                shade: 0.3,
+                shadeClose: true, //点击遮罩层关闭
+                maxmin: true,//最大最小花
+                content: "#springUrl('')/sysorg/sysorgdtree",
+                btn: ['确定', '关闭'],
+                yes: function(index, layero) {//index:当前层索引 layero:当前层DOM对象
+
+                    layer.close(index);
+                },
+                btn2: function() {
+                }
+            })
+        })
+
+
+        //监听表单提交
+        form.on('submit(go)', function(data) {
+            var params = data.field;//当前容器的全部表单字段，名值对形式：{name: value}
+            params.org_id = GetQuery("org_id");
+            jQuery.post("#springUrl('')/sysorg/updatesysorg", params, function(data) {
+                data = JSON.parse(data);
+                layer.msg(data.msg, {icon: data.code});
+                setTimeout(function() {
+                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                    parent.location.reload();//刷新父页面
+                }, 500)
+
+            })
+            return false;//非常重要，一定要添加，阻止表单跳转
+        })
+    })
+
+    function initForm() {
+
+        var parent_org_id = '$!sysorg.parent_org_id';
+        if (parent_org_id == 0) { //顶级部门
+            $(".layui-form-item").eq(0).addClass("layui-hide");
+        }
+        $("#parent_org_id").val(parent_org_id);
+        $("#parent_org_name").val('$!sysorg.parent_org_name');
+        $("input[name='org_name']").val('$!sysorg.org_name');
+        $("input[name='fzr']").val('$!sysorg.fzr');
+        $("input[name='lxdh']").val('$!sysorg.lxdh');
+        $("input[name='email']").val('$!sysorg.email');
+        $("input[name='order_num']").val('$!sysorg.order_num');
+        $("input[name='remark']").val('$!sysorg.remark');
+    }
+
+
+</script>
+<body>
+
+<form class="layui-form layui-form-pane" style="padding: 30px 10%;">
+    <input type="hidden" name="parent_org_id" id="parent_org_id" value="">
+    <div class="layui-form-item">
+        <label class="layui-form-label ">上级部门</label>
+        <div class="layui-input-block ">
+            <input type="text" id="parent_org_name"  lay-verify="required" autocomplete="off" placeholder="请选择上级部门" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">部门名称</label>
+        <div class="layui-input-block ">
+            <input type="text" name="org_name" lay-verify="required" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">负责人</label>
+        <div class="layui-input-block ">
+            <input type="text" name="fzr" lay-verify="required" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label ">联系电话</label>
+        <div class="layui-input-block ">
+            <input type="text" name="lxdh" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label ">邮箱</label>
+        <div class="layui-input-block ">
+            <input type="text" name="email" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label ">显示排序</label>
+        <div class="layui-input-block ">
+            <input type="text" name="order_num" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item" >
+        <label class="layui-form-label ">备注</label>
+        <div class="layui-input-block ">
+            <input type="text" name="remark" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="go">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+
+
+</body>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%7r] %6p - %30.30c - %m \n"/>
+        </layout>
+    </appender>
+
+    <appender name="FILE"
+              class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${log.file.path}"/>
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.txt'"></param>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %p - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="IBatis" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%-4r [%t] %-5p %c %x - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="DEBUG" />
+            <param name="LevelMax" value="DEBUG" />
+        </filter>
+    </appender>
+
+    <logger name="com.ibatis" additivity="true">
+        <level value="DEBUG" />
+    </logger>
+
+    <logger name="java.sql.Connection" additivity="true">
+        <level value="DEBUG" />
+    </logger>
+    <!--
+    <logger name="java.sql.Statement" additivity="true">
+    <level value="DEBUG" />
+    </logger>
+    -->
+    <logger name="java.sql.PreparedStatement" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="IBatis" />
+    </logger>
+
+    <logger name="java.sql.ResultSet" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="IBatis" />
+    </logger>
+
+
+    <root>
+        <priority value="${log.level}"/>
+        <appender-ref ref="${log.appender}"/>
+    </root>
+
+
+</log4j:configuration>

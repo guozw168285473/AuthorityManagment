@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lnlic.technic.dao.SysRoleDao">
+
+    <insert id="addSysRole" parameterType="com.lnlic.technic.domain.SysRole">
+        INSERT INTO sys_role(
+        role_id,
+        role_name,
+        role_description,
+        remark,
+        create_time,
+        update_time,
+        del_flag,
+        role_status) VALUES (
+        #{role_id, jdbcType=VARCHAR},
+        #{role_name, jdbcType=VARCHAR},
+        #{role_description, jdbcType=VARCHAR},
+        #{remark, jdbcType=VARCHAR},
+        sysdate,
+        sysdate,
+        del_flag = #{del_flag, jdbcType=VARCHAR},
+        role_status = #{role_status, jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateSysRole" parameterType="com.lnlic.technic.domain.SysRole">
+        update sys_role
+        <trim prefix="set" suffixOverrides=",">
+            <if test="role_name != null and role_name != ''">
+                role_name = #{role_name, jdbcType=VARCHAR},
+            </if>
+            <if test="role_description != null and role_description != ''">
+                role_description = #{role_description, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="role_status != null and role_status != ''">
+                role_status = #{role_status, jdbcType=CHAR},
+            </if>
+            <if test="del_flag != null and del_flag != ''">
+                del_flag = #{del_flag, jdbcType=CHAR},
+            </if>
+            <if test="1 == 1">
+                update_time = sysdate,
+            </if>
+        </trim>
+        WHERE role_id = #{role_id, jdbcType=VARCHAR}
+    </update>
+    <select id="getSysRoleList" resultType="com.lnlic.technic.domain.SysRole" parameterType="java.util.HashMap">
+        select b.*
+        from sys_user a, sys_role b, sys_role_user c
+        where a.user_id = c.user_id
+        and b.role_id = c.role_id
+        <if test="username != null and username != ''">
+            and a.username = #{username, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="getSysRoleList2nd" resultType="com.lnlic.technic.domain.SysRole">
+        select * from sys_role
+    </select>
+
+    <select id="getSysRoleObj" parameterType="com.lnlic.technic.domain.SysRole" resultType="com.lnlic.technic.domain.SysRole">
+        select * from sys_role
+        <where>
+            <if test="role_id != null and role_id != ''">
+                role_id = #{role_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--获取角色所拥有的权限-->
+    <select id="getRolePermsConfig" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT menu_id FROM sys_role_menu
+        <where>
+            <if test="role_id != null and role_id != ''">
+                role_id = #{role_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deletePermsConfig" parameterType="java.util.HashMap">
+        delete from sys_role_menu
+        where role_id = #{role_id, jdbcType=VARCHAR}
+    </delete>
+</mapper>

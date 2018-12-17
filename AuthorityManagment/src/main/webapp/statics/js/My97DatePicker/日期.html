@@ -1,0 +1,16 @@
+<html>
+	<head>
+		<title></title>
+		<!--引入开始-->
+		<script language="javascript" type="text/javascript" src="WdatePicker.js"></script>
+		<!--引入结束-->
+		<script>
+		window.onload=function(){
+			WdatePicker({skin:'whyGreen',eCont:'div1',onpicked:function(dp){alert('你选择的日期是:'+dp.cal.getDateStr())}})
+		}
+		</script>
+	</head>
+	<body>
+		<div id="div1"></div>
+	</body>
+</html>

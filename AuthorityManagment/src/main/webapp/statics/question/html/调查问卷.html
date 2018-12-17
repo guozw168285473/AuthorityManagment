@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/comm.css" id="commCss" />
+		<link rel="stylesheet" type="text/css" href="../css/content.css" id="contentCss" />
+		<script src="../js/jquery.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="../js/plugins/swiper/css/swiper.css" />
+		<script src="../js/plugins/swiper/js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+		
+		<!--校验^-->
+		<link rel="stylesheet" media="screen" href="../js/plugins/validation/css/core.css">
+		<script type="text/javascript" src="../js/plugins/validation/js/jquery.validate.js"></script>
+		<script type="text/javascript" src="../js/plugins/validation/js/messages_zh.js"></script>
+		<script type="text/javascript" src="../js/plugins/validation/js/additional-methods.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function() {
+			$(".form-validation").validate({
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+				     error.appendTo( element.parents(".feedbackItem").children("dt"));
+				}
+			});
+		
+		});
+		</script>	
+		<!--校验$-->
+		
+		<script type="text/javascript">
+			$("#contentCss").attr("href", "../css/content.css?v=" + new Date().getTime());
+		</script>
+	</head>
+
+	<body>
+		<div id="header">
+			<div id="headerInner">
+				<img src="../images/logo.png" class="logo" />
+				<ul class="headerList">
+					<li>
+						<a href="#">网站声明</a>
+					</li>
+					<li>
+						<a href="#">关于我们</a>
+					</li>
+				</ul>
+			</div>
+			<div class="navBox">
+				<ul class="navList">
+					<li>
+						<a href="#">首页</a>
+					</li>
+					<li>
+						<a href="#">信用动态</a>
+					</li>
+					<li>
+						<a href="#">联合惩戒</a>
+					</li>
+					<li>
+						<a href="#">双公示</a>
+					</li>
+					<li>
+						<a href="#">信用查询</a>
+					</li>
+					<li>
+						<a href="#">政策法规</a>
+					</li>
+					<li>
+						<a href="#">信用服务</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="content">
+			<div class="path">
+				<a href="#" class="icon-home">首页</a> / <a href="#">信用信息共享</a> / <a href="#">调查问卷</a> /
+			</div>
+			<div class="page clearfix">
+				<!--调查问卷^-->
+				<div class="feedback">
+					<form method="post" action="" class="form-horizontal form-validation" role="form-add">
+					<div class="feedbackHeader">315消费者权益日调查问卷</div>
+					<div class="feedbackTips">
+						<b>温馨提示：</b>请你认真阅读以下描述，根据你的实际情况回答问卷并提交，您的意见将会是我们最宝贵的财富。
+					</div>
+					<div class="feedbackTitle">您最关注的消费诚信问题</div>
+					<dl class="feedbackItem">
+						<dt>1.您刚刚提到您订购过XXX的外卖，请问您是在什么时段点餐的呢？（单选）</dt>
+						<dd>
+							<div class="feedbackOption"><label><input type="radio" name="a" data-msg-required="请选择" data-rule-required="true">是</label></div>
+							<div class="feedbackOption"><label><input type="radio" name="a">否</label></div>
+						</dd>
+					</dl>
+					<dl class="feedbackItem">
+						<dt>2.请问您当时是出于什么原因而订购了XXX的外卖呢？还有吗？（可多选）</dt>
+						<dd>
+							<div class="feedbackOption"><label><input type="radio" name="b" data-msg-required="请选择" data-rule-required="true">自己不想做饭</label></div>
+							<div class="feedbackOption"><label><input type="radio" name="b">小朋友想吃</label></div>
+							<div class="feedbackOption"><label><input type="radio" name="b">不想出门/懒得出门</label></div>
+							<div class="feedbackOption"><label><input type="radio" name="b">想换换口味</label></div>
+						</dd>
+					</dl>
+					<div class="feedbackButtonBox">
+						<input id="feedbackSubmit" type="submit" value="提交" class="feedbackSubmit" />
+						<input id="feedbackView" type="button" value="查看" class="feedbackView" />
+					</div>
+					</form>
+				</div>
+				<!--调查问卷$-->
+			</div>
+		</div>
+		<div id="footer">
+			<div id="footerInner">
+				<div id="footerTxt" class="clearfix">
+					<img src="../images/vi.png" class="fl" />
+					<p class="fl">
+						&copy;版权所有：
+						<a href="#">（辽宁沈阳）</a> |
+						<a href="#">网站声明</a> |
+						<a href="#">关于我们</a><br> 主办单位：沈阳市发展和改革委员会 辽ICP备05052393号-5<br> 承办单位： 沈阳市诚信建设促进会 技术支持：辽宁立科信息工程有限公司
+					</p>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

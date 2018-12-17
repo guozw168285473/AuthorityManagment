@@ -1,0 +1,350 @@
+.bg_block {
+	padding-bottom: 106px;
+    background: #fff url(../webservice/portal/images/block.gif);
+}
+
+/*出错信息*/
+.bg_errBlock{
+	background: #fff url(../image/block.gif);
+	padding-bottom:44px
+}
+#errWapper{
+    margin: 0 auto;
+    padding-top: 94px;
+    background:url(../image/logo2.png) no-repeat center top;
+}
+.errContent{
+	padding: 10px;
+    width: 90%;
+    line-height: 2.4;
+    font-size: 14px;
+    margin: 0 auto;
+    background-color: #fff;
+	box-sizing:border-box;
+	-moz-box-sizing:border-box; /* Firefox */
+	-webkit-box-sizing:border-box; /* Safari */
+}
+#errFooter {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 5px 10px;
+    text-align: right;
+    background-color: #1678e1;
+}
+/*用户登录*/
+.loginPage {}
+#loginWapper {
+    margin: 0 auto;
+    text-align: center;
+    background: url(../image/index_login_pic.png) no-repeat center center;
+}
+#formLoginBox {
+    position: relative;
+    width: 287px;
+    height: 580px;
+    margin: 0 auto;
+}
+.loginTip {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    box-sizing: content-box;
+    padding-left: 24px;
+    width: 264px;
+    height: 36px;
+    line-height: 36px;
+    text-align: left;
+    background: #feffa1 url(../webservice/portal/images/warn.gif) no-repeat 4px center;
+}
+#loginform {
+    display: block;
+    position: absolute;
+    width: 100%;
+    top: 300px;
+    padding-top: 40px;
+}
+@-moz-document url-prefix() {
+    #loginform {
+        padding-top: 37px;
+    }
+}
+#formLoginBox input {
+    box-sizing: content-box
+}
+.inputLoginBox {
+    text-align: center;
+}
+.inputLoginTxt {
+    display: block;
+    margin: 0 auto 5px auto;
+    width: 238px;
+    padding: 0 36px 0 4px;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+    background: url(../image/page_loginPic.png) 252px -50px no-repeat;
+}
+.inputLoginPass {
+    display: block;
+    margin: 0 auto 5px auto;
+    width: 238px;
+    padding: 0 36px 0 4px;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+    background: url(../image/page_loginPic.png) 252px -106px no-repeat;
+}
+.inputLoginCodeBox {
+    position: relative;
+    margin: 0 auto;
+    width: 280px;
+    min-height: 36px;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.inputLoginCodeInner {
+    position: relative;
+    width: 210px;
+    display: inline-block;
+}
+.inputLoginCode {
+    width: 200px;
+    display: block;
+    padding: 0 4px;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+}
+.inputLoginCodeFix {
+    width: 160px;
+    display: block;
+    padding: 0 4px;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+}
+.imageCodeFix {
+    width: 102px;
+    height: 34px;
+    vertical-align: top;
+}
+.inputLoginCodeInner {
+    position: relative;
+    width: 210px;
+    display: inline-block;
+}
+.inputLoginCodeInnerFix {
+    position: relative;
+    display: inline-block;
+}
+.loginFooter {
+    clear: both;
+}
+
+
+.inputSubmit {
+    width: 89px;
+    height: 33px;
+    background: url(../image/page_loginPic.png) 0 0 no-repeat;
+    border: none;
+}
+
+.inputSubmit:hover {
+    width: 89px;
+    height: 33px;
+    background: url(../image/page_loginPic.png) 0 0 no-repeat;
+    border: none;
+    FILTER: alpha(opacity=80);
+    moz-opacity: 0.8;
+    opacity: 0.8;
+}
+
+/*用户注册*/
+#regPageBox {
+    position: relative;
+}
+.regPage {
+    font-size: 14px;
+}
+#regWapper {
+    margin: 0 auto;
+    padding-top: 94px;
+    background: url(../image/index_login.png) no-repeat center top;
+}
+#regFormHeader {
+    height: 106px;
+    background: url(../image/formRegHeader.png) no-repeat center top
+}
+#regFormMain {
+    background: url(../image/formRegMain.png) repeat-y center;
+    min-height:260px;
+}
+#regFormContent {
+    width: 440px;
+    background-color: #fff;
+    padding-bottom: 10px;
+    margin: 0 auto;
+}
+
+#formRegBox {
+    text-align: center;
+}
+#formRegBox form {
+    display: block;
+    position: relative;
+}
+.inputRegBox {
+    position: relative;
+    min-height: 36px;
+    padding-left: 90px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+.inputRegBox em {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 90px;
+    height: 36px;
+    line-height: 36px;
+    text-align: right;
+}
+.inputRegTxt {
+    display: block;
+    width: 100%;
+    padding: 0 4px;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+    box-sizing: border-box;
+}
+
+.inputRegCodeBox {
+    position: relative;
+    min-height: 36px;
+    padding-left: 90px;
+    text-align: left;
+}
+.inputRegCodeBox em {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 90px;
+    height: 36px;
+    line-height: 36px;
+    text-align: right;
+}
+.inputRegCode {
+    display: inline-block;
+    width: 210px;
+    padding: 0 4px;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+}
+.inputRegPass {
+    display: block;
+    width: 100%;
+    padding: 0 4px;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+}
+.inputRegSelect {
+    display: inline-block;
+    padding-left: 4px;
+    width: 100%;
+    height: 34px;
+    line-height: 34px;
+    border: 1px solid #e1e1e1;
+}
+.inputRegSelect_expand {
+    background: url(../image/toggle.png) no-repeat right -30px;
+}
+.inputRegSelect_shrink {
+    background: url(../image/toggle.png) no-repeat right top;
+}
+
+.imageCode {
+    display: inline-block;
+    height: 34px;
+}
+
+.inputRegArea {
+    display: block;
+    width: 100%;
+    padding: 4px;
+    height: 34px;
+    border: 1px solid #e1e1e1;
+    line-height: 1.2;
+    height: 108px;
+    resize: none;
+}
+.controlRegBox {
+    width: 460px;
+    height: 68px;
+    line-height: 68px;
+}
+#regFormFooter {
+    position: relative;
+    height: 54px;
+    line-height:54px;
+    background: url(../image/formRegFooter.png) no-repeat center top;
+}
+#regFormFooterInnner {
+    height:54px;
+    line-height:54px
+}
+
+#regResultBox {
+    position: relative;
+    padding-left: 100px;
+    padding-top: 50px;
+}
+.resultSuccess {
+    position: absolute;
+    left: 0;
+    top: 58px;
+    width: 95px;
+    height: 95px;
+    background: url(../webservice/portal/images/resultIcon.png) no-repeat;
+}
+.resultFail {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 111px;
+    height: 111px;
+    background: url(../image/resultIcon.png) no-repeat -95px center;
+}
+.resultContent {
+    text-align: left;
+    line-height: 36px;
+    cc9900
+}
+.resultContent b {
+    color: #cc9933;
+}
+
+/*注册的ztree*/
+.treeWrapper {
+    position: absolute;
+    top: 33px;
+    z-index: 2;
+    width: 320px;
+    max-height: 150px;
+    background-color: #fff;
+    border: 1px solid #e1e1e1;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    display: none;
+    overflow:auto;
+}
+
+.treeWrapper ul.ztree {
+    max-height: 140px;
+}

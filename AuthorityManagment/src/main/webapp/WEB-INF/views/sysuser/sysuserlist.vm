@@ -1,0 +1,359 @@
+#set($layout = "layout/default.vm")
+##<link rel="stylesheet" href="#springUrl('')/statics/js/zTree_v3-master/css/metroStyle/metroStyle.css" type="text/css">
+##<script type="text/javascript" src="#springUrl('')/statics/js/zTree_v3-master/js/jquery.ztree.core.js"></script>
+
+<link rel="stylesheet" href="#springUrl('')/statics/js/dtree/dtree.css" type="text/css">
+<link rel="stylesheet" href="#springUrl('')/statics/js/dtree/font/dtreefont.css" type="text/css">
+
+<script>
+	var table,layer,form,dtree;
+    var org_id;
+	$(document).ready(function() {
+
+
+
+        layui.extend({
+            dtree: "#springUrl('')/statics/js/dtree/dtree"
+        }).use(['table', 'layer', 'form', 'dtree'], function() {
+			table = layui.table;
+			layer = layui.layer;
+			form = layui.form;
+            dtree = layui.dtree;
+
+
+
+            //region 部门树渲染 layui dtree
+
+            //dtree渲染
+            jQuery.getJSON("#springUrl('')/sysorg/getsysorglist", {}, function(data) {
+                var dNodes = data.data;
+                dtree.render({
+                    elem: "#sysorgDtrre",
+//                    method: "get",
+                    url: "#springUrl('')/sysorg/getsysorglist",
+                    data: dNodes,
+                    dataStyle: "layuiStyle",  //使用layui风格的数据格式
+                    dataFormat: "list",  //配置data的风格为list
+                    skin: "layui" , // layui主题风格
+                    initLevel: 3,//初始化时 显示到第几层级
+                    dot: false,  // 设定小圆点显示
+                    ficon: "0",  // 设定一级图标样式
+                    icon: ["0","7"], // 设定二级图标样式。0表示非子节点图标，8表示子节点图标
+                    menubar:true,//开启菜单栏
+                    menubarTips:{
+//                        freedom:[{menubarId:"zdy",handler:function(node){layer.msg(JSON.stringify(node));}}], // 指定自定义按钮。非freedom的自定义指定还需提供icon和title参数
+                        group:[] // 默认的按钮组置空
+                    },
+                    response:{
+                        statusName: "code", //返回标识（必填）
+                        statusCode: 200, //返回码（必填）
+                        message: "message", //返回信息（必填）
+                        rootName: "data", //根节点名称（必填）
+                        treeId: "org_id", //节点ID（必填）
+                        parentId: "parent_org_id", //父节点ID（必填）
+                        title: "org_name" //节点名称（必填）
+
+                    } //修改response中返回数据的定义
+                });
+
+            })
+
+            //监听单击事件
+            dtree.on("node('sysorgDtrre')", function(obj){
+
+                org_id = obj.param.nodeId;
+//                alert(org_id)
+                table.reload('layTable', {
+                    where: {sidx: 'username', sord: '', org_id: org_id}
+                });//表格重载
+
+            });
+
+            //endregion
+
+            //region 用户table渲染
+            table.render({
+                elem: '#layTable',
+                height: 'full-0',
+                url: '#springUrl('')/sysuser/getsysuserlist',
+                toolbar: '#toolbar',
+                method:'POST',   //laui 修改请求方式
+                request: {
+                    pageName: 'pageNo', //页码的参数名称，默认：page
+                    limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                },
+                response: {
+                    statusName: 'code', //数据状态的字段名称，默认：code
+                    statusCode: 200, //规定成功的状态码，默认是0
+                    msgName: 'hint', //规定状态信息的字段名称，默认是msg
+                    countName: 'totalCount',//数据总数的字段名称，默认：count
+                    dataName: 'rows' //数据列表的字段名称，默认：data
+
+                },
+//				limit:10,  //默认十条数据一页
+//				limits:[1,10,20,30,50],  //数据分页条
+//            	page: true, //开启分页, 也可以像下面这样传入一个对象
+
+                page: {
+                    limit: 10,
+                    limits: [1, 10, 20, 30],
+                    curr: 1
+                },
+                cols: [[ //表头
+//                {type: 'numbers', hide: true},
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'user_id', title: 'user_id', hide: true},
+                    {field: 'username', title: '用户名称', align: 'center', sort: true},
+                    {field: 'realName', title: '真实名称', align: 'center', sort: true },
+                    {field: 'email', title: '邮箱', align: 'center'},
+                    {field: 'phoneNumber', title: '手机号码'},
+                    {field: 'sex', title: '性别', align: 'center', templet: function(res) {
+                        var sex = res.sex;
+                        var content = "";
+                        if (sex == 0) {
+                            content = "<button class='layui-btn layui-btn-xs layui-btn-danger layui-btn-radius'>男</button>";
+                        } else if (sex == 1) {
+                            content = "<button class='layui-btn layui-btn-xs layui-btn-normal layui-btn-radius'>女</button>";
+                        } else {
+                            content = "<button class='layui-btn layui-btn-xs layui-btn-radius'>不详</button>";
+                        }
+                        return content;
+                    }},
+                    {field: 'user_status', title: '用户状态', align: 'center', templet: function(res) {
+                        var user_status = res.user_status;
+                        var user_id = res.user_id;
+                        var content = '';
+                        if (user_status == 0) {//正常
+                            content = "<input type='checkbox' title='启用' value='"+user_id+"' lay-filter='user_status' checked>";
+                        } else if (user_status == 1) {
+                            content = "<input type='checkbox' title='启用' value='"+user_id+"' lay-filter='user_status' >";
+                        }
+                        return content;
+                    }},
+                    {field: 'remark', title: '备注', align: 'center'}
+
+                ]],
+                even: true,//斑马线效果
+                where: {sidx: 'username', sord: '', org_id: org_id},//请求的参数
+                done: function() {
+
+                }
+
+            });
+
+            //监听头部工具栏按钮
+            table.on('toolbar(filter-layTable)', function(obj) {
+                var checkedStatus = table.checkStatus("layTable");
+                var checkedData = checkedStatus.data;//获取选中行的数据
+                switch (obj.event) {
+
+                    case "add":
+                        if (org_id) {
+                            add(org_id);
+                        } else {
+                            layer.msg("请选择部门", {icon: 2});
+                        }
+                        break;
+                    case "edit":
+                        if (checkedData.length != 1) {
+                            layer.msg("选择一条编辑", {icon: 2});
+                        } else {
+                            var user_id = checkedData[0].user_id;//获取用户id
+                            edit(user_id);
+                        }
+                        break;
+                    case "del":
+                        if (checkedData.length == 0) {
+                            layer.msg("至少选择一条记录", {icon: 2})
+                        } else {
+
+                            var user_ids = "";
+                            jQuery.each(checkedData, function(i, obj) {
+
+                                user_ids += obj.user_id + ",";
+                            })
+                            user_ids = user_ids.substr(0, user_ids.length - 1);
+                            del(user_ids);
+                        }
+                        break;
+                    case "resetPwd":
+
+                        if (checkedData.length != 1) {
+                            layer.msg("选择一条编辑", {icon: 2});
+                        } else {
+                            var user_id = checkedData[0].user_id;//获取用户id
+                            var username = checkedData[0].username;
+                            resetPwd(user_id, username);
+                        }
+                        break;
+
+                }
+            })
+
+            //监听菜单启用操作 0-启用 1-未启用
+            form.on('checkbox(user_status)', function(obj){
+                var user_id = this.value;
+                var user_status = obj.elem.checked ? 0 : 1;
+                jQuery.post("#springUrl('')/sysuser/updatesysuser", {user_id: user_id, user_status: user_status}, function(data) {
+                    data = JSON.parse(data);
+                    layer.msg(data.msg, {icon: data.code});
+
+                })
+            });
+
+
+            //endregion
+        });
+
+
+
+
+    })
+
+    //新增
+    function add(org_id) {
+
+        layer.open({
+            title: "添加用户",
+            type: 2,//iframe层
+            area: ['800px', '550px'],
+            shade: 0.3,
+            shadeClose: true, //点击遮罩层关闭
+            maxmin: true,//最大最小花
+            content: "#springUrl('')/sysuser/edit?org_id=" + org_id,
+
+        })
+
+    }
+
+    //编辑
+    function edit(user_id) {
+
+        layer.open({
+            title: "编辑用户",
+            type: 2,//iframe层
+            area: ['800px', '550px'],
+            shade: 0.3,
+            shadeClose: true, //点击遮罩层关闭
+            maxmin: true,//最大最小花
+            content: "#springUrl('')/sysuser/edit?user_id=" + user_id,
+        })
+
+    }
+
+    //批量删除用户，逻辑删除（部门-用户关联表的数据未删除） 0-正常 1-删除
+    function del(user_ids) {
+        layer.confirm("确定要删除吗？", {icon: 3, title: "提示"}, function (index) {
+            jQuery.post("#springUrl('')/sysuser/del", {user_id: user_ids, del_flag: 1}, function(data) {
+                data = JSON.parse(data)
+                layer.msg(data.msg, {icon: data.code});
+                if (data.flag) {
+                    setTimeout(function(){window.location.reload()}, 1000);
+                }
+
+            })
+
+        });
+    }
+
+    //重置密码
+    function resetPwd(user_id, username) {
+        layer.confirm("确定要重置密码吗？", {icon: 3, title: '提示'}, function(index) {
+            jQuery.post("#springUrl('')/sysuser/resetPwd", {user_id: user_id, username: username}, function(data) {
+                data = JSON.parse(data);
+                layer.msg(data.msg, {icon: data.code});
+            })
+        })
+
+    }
+
+
+
+    //region 部门树ztree实现
+
+    //ztree初始化
+    function initOrgZtree() {
+        jQuery.getJSON("#springUrl('')/sysorg/getsysorglist", {}, function(data) {
+            var zNodes = data.data;
+            var setting = {
+                data: {
+                    simpleData: {
+                        enable: true,
+                        idKey: "org_id",
+                        pIdKey: "parent_org_id"
+                    },
+                    key: {
+                        name: "org_name"
+                    }
+                },
+                callback: {
+                    onClick: function(event, treeId, treeNode, clickFlag) {
+                        org_id = treeNode.org_id;
+                        table.reload('layTable', {
+                            where: {sidx: 'username', sord: '', org_id: org_id}
+                        });//表格重载
+                    }
+                }
+            };
+            jQuery.fn.zTree.init($("#sysorgDtrre"), setting, zNodes);
+            expandNodes();
+
+        })
+    }
+
+    //ztree展开全部节点
+    function expandNodes() {
+        var treeObj = jQuery.fn.zTree.getZTreeObj("sysorgDtrre");
+        var nodes = treeObj.getNodes();
+        if (nodes.length>0) {
+            for(var i=0;i<nodes.length;i++){
+                treeObj.expandNode(nodes[i], true, true, false);//第三个参数为false展开第一级节点, true展开全部节点
+            }
+        }
+    }
+    //endregion
+</script>
+
+<body>
+
+
+<div class="layui-row">
+    <div class="layui-col-md2" >
+        <div class="layui-btn-group" style="margin: 10px 10px;">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" dtree-id="sysorgDtrre" dtree-menu="moveDown">
+                <i class="layui-icon">&#xe61a;</i>
+            </button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" dtree-id="sysorgDtrre" dtree-menu="moveUp">
+                <i class="layui-icon">&#xe619;</i>
+            </button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" dtree-id="sysorgDtrre" dtree-menu="refresh">
+                <i class="layui-icon">&#xe669;</i>
+            </button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" dtree-id="sysorgDtrre" dtree-menu="searchNode">
+                <i class="layui-icon">&#xe615;</i>
+            </button>
+        ##    <button class="layui-btn layui-btn-primary layui-btn-sm" dtree-id="sysorgDtrr" dtree-menu="zdy">
+        ##        <i class="layui-icon">&#xe677;</i>
+        ##    </button>
+        </div>
+        <div id="sysorgDtrre" class="dtree" data-id="0"></div>
+    </div>
+    <div class="layui-col-md10">
+        <table id="layTable" class="layui-table" lay-filter="filter-layTable"></table>
+    </div>
+</div>
+
+
+
+
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon ">&#xe654;</i>新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="edit"><i class="layui-icon ">&#xe642;</i>编辑</button>
+##        <button class="layui-btn layui-btn-sm" lay-event="del"><i class="layui-icon ">&#xe640;</i>删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="resetPwd"><i class="layui-icon ">&#xe673;</i>重置</button>
+    </div>
+</script>
+
+
+</body>

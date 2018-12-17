@@ -1,0 +1,54 @@
+#set($layout = "layout/default.vm")
+<link rel="stylesheet" href="#springUrl('')/statics/js/zTree_v3-master/css/metroStyle/metroStyle.css" type="text/css">
+<script type="text/javascript" src="#springUrl('')/statics/js/zTree_v3-master/js/jquery.ztree.core.js"></script>
+<script>
+    var layer, form;
+	$(document).ready(function() {
+
+
+        jQuery.getJSON("#springUrl('')/sysmenu/getsysmenulist", {}, function(data) {
+            var rootNode = {menu_id: 0, menu_name: "系统菜单", parent_id: ''}
+            var zNodes = data.data;
+            zNodes.push(rootNode);
+            var setting = {
+                data: {
+                    simpleData: {
+                        enable: true,
+                        idKey: "menu_id",
+                        pIdKey: "parent_id"
+                    },
+                    key: {
+                        name: "menu_name"
+                    }
+                },
+                callback: {
+                    onClick: function(event, treeId, treeNode, clickFlag) {
+                        parent.$("#parent_menu_name").val(treeNode.menu_name);
+                        parent.$("#parent_id").val(treeNode.menu_id);
+                    }
+                }
+            };
+            jQuery.fn.zTree.init($("#sysmenuZtrr"), setting, zNodes);
+            expandTheFirstNodes();
+
+        })
+
+
+    })
+
+    //展开第一层节点
+    function expandTheFirstNodes() {
+        var treeObj = jQuery.fn.zTree.getZTreeObj("sysmenuZtrr");
+        var nodes = treeObj.getNodes();
+        if (nodes.length>0) {
+            for(var i=0;i<nodes.length;i++){
+                treeObj.expandNode(nodes[i], true, false, false);//默认展开第一级节点
+            }
+        }
+    }
+</script>
+<body>
+<div id="sysmenuZtrr" class="ztree"></div>
+
+
+</body>

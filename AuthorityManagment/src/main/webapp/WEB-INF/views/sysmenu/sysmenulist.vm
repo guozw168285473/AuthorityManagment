@@ -1,0 +1,143 @@
+#set($layout = "layout/default.vm")
+<script>
+    var layer;
+	$(document).ready(function() {
+        var isFold = true;//是否折叠
+        layui.config({
+            base: "#springUrl('')/statics/js/treetable-lay/"
+        }).extend({
+            treetable: 'treetable'
+        }).use(['treetable', 'form'], function () {
+            var treetable = layui.treetable;
+            var form = layui.form;
+            layer = layui.layer;
+            var table = layui.table;
+
+            treetable.render({
+                treeColIndex: 2,          // 树形图标（箭头和文件夹、文件的图标）显示在第几列， 索引值是cols数组的下标。
+                treeSpid: 0,             // 最上级的父级id
+                treeIdName: 'menu_id',       // id字段的名称
+                treePidName: 'parent_id',     // pid字段的名称
+                treeDefaultClose: true,   // 是否默认折叠
+                treeLinkage: true,        // 父级展开时是否自动展开所有子级
+                elem: '#layTable',
+                method:'POST',//post请求无效，源码用的是get请求，需要用post的话要修改源码
+                toolbar: '#toolbar',
+                url: "#springUrl('')/sysmenu/getsysmenulist",
+                cols: [[
+//                    {type: 'numbers'},
+                    {type: 'checkbox'},
+                    {field: 'menu_id', title: 'menu_id', hide: true},
+                    {field: 'menu_name', title: '名称', minWidth: 200},
+                    {field: 'url_addr', title: '访问路径'},
+                    {field: 'menu_type', title: '菜单类型', align: 'center', templet: function(res) {
+                        var content = "";
+                        var menu_type = res.menu_type;
+                        if (menu_type == 0) {
+                            content = "<button class='layui-btn layui-btn-xs'>目录</button>";
+                        } else if (menu_type == 1) {
+                            content = "<button class='layui-btn layui-btn-warm layui-btn-xs'>菜单</button>";
+                        } else if (menu_type == 2) {
+                            content = "<button class='layui-btn layui-btn-danger layui-btn-xs'>按钮</button>";
+                        }
+                        return content;
+                    }},
+                    {field: 'menu_icon', title: '菜单图标'},
+                    {field: 'perms', title: '权限标识'},
+                    {field: 'men_status', title: '菜单状态',templet: function(res) {
+                        var menu_id = res.menu_id;
+                        var menu_status = res.menu_status;
+                        var content = '';
+                        if (menu_status == 0) {//启用
+                            content = "<input type='checkbox' value='"+menu_id+"' title='启用' lay-filter='menu_enable' checked>";
+                        } else if (menu_status == 1) {
+                            content = "<input type='checkbox' value='"+menu_id+"' title='启用' lay-filter='menu_enable' >";
+                        }
+                        return content;
+                    }},
+                    {field: 'create_time', title: '创建时间'},
+                    {field: 'remark', title: '备注'}
+                ]],
+                done: function() {
+
+                }
+            });
+
+            //监听菜单启用操作
+            form.on('checkbox(menu_enable)', function(obj){
+                var menu_id = this.value;
+                var menu_status = obj.elem.checked ? 0 : 1;
+                jQuery.post("#springUrl('')/sysmenu/updatesysmenu", {menu_status: menu_status, menu_id: menu_id}, function(data) {
+                    data = JSON.parse(data);
+                    layer.msg(data.msg, {icon: data.code});
+
+                })
+            });
+
+            //监听头部工具栏按钮
+            table.on('toolbar(filter-layTable)', function(obj) {
+                switch (obj.event) {
+                    //展开/折叠
+                    case "expandOrFold":
+                        if (isFold) {
+                            treetable.expandAll('#layTable');
+                            isFold = false;
+                        } else {
+                            treetable.foldAll('#layTable');
+                            isFold = true;
+                        }
+                        break;
+                    case "add":
+                        layer.open({
+                            title: "添加菜单",
+                            type: 2,//iframe层
+                            area: ['800px', '500px'],
+                            shade: 0.3,
+                            shadeClose: true, //点击遮罩层关闭
+                            maxmin: true,//最大最小花
+                            content: "#springUrl('')/sysmenu/edit",
+
+                        })
+                        break;
+                    case "edit":
+                        var checkedStatus = table.checkStatus("layTable");
+                        var checkedData = checkedStatus.data;//获取选中行的数据
+                        if (checkedData.length != 1) {
+                            layer.msg("选择一条编辑", {icon: 3});
+                        } else {
+                            var menu_id = checkedData[0].menu_id;
+                            layer.open({
+                                title: "编辑菜单",
+                                type: 2,//iframe层
+                                area: ['800px', '550px'],
+                                shade: 0.3,
+                                shadeClose: true, //点击遮罩层关闭
+                                maxmin: true,//最大最小花
+                                content: "#springUrl('')/sysmenu/edit?menu_id=" + menu_id,
+                            })
+                        }
+
+                        break;
+                }
+            })
+
+        });
+
+
+
+
+    })
+</script>
+<body>
+
+<table id="layTable" class="layui-table" lay-filter="filter-layTable"></table>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon ">&#xe654;</i>新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="edit"><i class="layui-icon ">&#xe642;</i>编辑</button>
+##        <button class="layui-btn layui-btn-sm" lay-event="del"><i class="layui-icon ">&#xe640;</i>删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="expandOrFold"><i class="layui-icon "></i>展开/折叠</button>
+    </div>
+</script>
+</body>

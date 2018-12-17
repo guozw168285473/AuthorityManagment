@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profilesXml xmlns="http://maven.apache.org/PROFILES/1.0.0"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://maven.apache.org/PROFILES/1.0.0 http://maven.apache.org/xsd/profiles-1.0.0.xsd">
+    <profiles>
+        <!--本机开发环境-->
+        <profile>
+            <id>localhost</id>
+            <properties>
+                <!--log config-->
+                <log.file.path>D:/ssm/ssh.log</log.file.path>
+                <log.level>DEBUG</log.level>
+                <log.appender>CONSOLE</log.appender>
+                <!--mssql database-->
+                <pf.production.jdbc.driver>oracle.jdbc.driver.OracleDriver</pf.production.jdbc.driver>
+                <pf.production.jdbc.url>jdbc:oracle:thin:@//localhost:1521/pdborcl</pf.production.jdbc.url>
+                <pf.production.jdbc.username>guozw</pf.production.jdbc.username>
+                <pf.production.jdbc.password>guozw</pf.production.jdbc.password>
+
+                <!--FreeMarker ftl模版文件存放位置-->
+                <pf.production.ftl.ftlPath>/statics/word</pf.production.ftl.ftlPath>
+                <!--上传附件存放路径-->
+                <pf.ssm.attachment.file>d:\file</pf.ssm.attachment.file>
+            </properties>
+        </profile>
+
+        <!--本机生产环境-->
+        <profile>
+            <id>Real</id>
+            <properties>
+                <!--log config-->
+                <log.file.path>D:/ssm/ssm.log</log.file.path>
+                <log.level>INFO</log.level>
+                <log.appender>FILE</log.appender>
+                <!--mssql database-->
+                <pf.production.jdbc.driver>oracle.jdbc.OracleDriver</pf.production.jdbc.driver>
+                <pf.production.jdbc.url>jdbc:oracle:thin:@localhost:1521:orcl</pf.production.jdbc.url>
+                <pf.production.jdbc.username>scott</pf.production.jdbc.username>
+                <pf.production.jdbc.password>scott</pf.production.jdbc.password>
+
+                <!--FreeMarker ftl模版文件存放位置-->
+                <pf.production.ftl.ftlPath>/statics/word</pf.production.ftl.ftlPath>
+                <!--上传附件存放路径-->
+                <pf.ssm.attachment.file>d:\file</pf.ssm.attachment.file>
+            </properties>
+        </profile>
+
+    </profiles>
+</profilesXml>

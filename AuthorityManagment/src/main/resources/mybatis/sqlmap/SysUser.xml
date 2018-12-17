@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lnlic.technic.dao.SysUserDao">
+
+    <insert id="addSysUser" parameterType="com.lnlic.technic.domain.SysUser">
+        INSERT INTO sys_user(
+        user_id,
+        username,
+        password,
+        email,
+        phonenumber,
+        sex,
+        salt,
+        last_login_time,
+        create_time,
+        update_time,
+        remark,
+        realname,
+        user_status,
+        del_flag
+        )
+        VALUES (
+        #{user_id, jdbcType=VARCHAR},
+        #{username, jdbcType=VARCHAR},
+        #{password, jdbcType=VARCHAR},
+        #{email, jdbcType=VARCHAR},
+        #{phoneNumber, jdbcType=VARCHAR},
+        #{sex, jdbcType=CHAR},
+        #{salt, jdbcType=VARCHAR},
+        #{user_status, jdbcType=VARCHAR},
+        sysdate,
+        sysdate,
+        #{remark, jdbcType=VARCHAR},
+        #{realName, jdbcType=VARCHAR},
+        0,
+        0
+        )
+    </insert>
+
+    <update id="updateSysUser" parameterType="com.lnlic.technic.domain.SysUser">
+        update sys_user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="password != null and password != ''">
+                password = #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                phoneNumber = #{phoneNumber, jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex, jdbcType=CHAR},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null and realName != ''">
+                realName = #{realName, jdbcType=VARCHAR},
+            </if>
+            <if test="user_status != null and user_status != ''">
+                user_status = #{user_status, jdbcType=CHAR},
+            </if>
+            <if test="del_flag != null and del_flag != ''">
+                del_flag = #{del_flag, jdbcType=CHAR},
+            </if>
+
+            <if test="1 == 1">
+                update_time = sysdate,
+            </if>
+        </trim>
+        WHERE user_id = #{user_id, jdbcType=VARCHAR}
+    </update>
+    <insert id="addOrgUser" parameterType="java.util.HashMap">
+        INSERT INTO sys_org_user(org_id, user_id)
+        VALUES
+        (#{org_id, jdbcType=VARCHAR}, #{user_id, jdbcType=VARCHAR})
+    </insert>
+    <select id="getSysUserObj" resultType="com.lnlic.technic.domain.SysUser" parameterType="com.lnlic.technic.domain.SysUser">
+        SELECT
+        user_id,
+        username,
+        password,
+        email,
+        phonenumber,
+        sex,
+        salt,
+        user_status,
+        del_flag,
+        last_login_time,
+        create_time,
+        update_time,
+        remark,
+        realname
+        FROM SYS_USER
+        <where>
+            <if test="username != null and username != ''">
+                username = #{username, jdbcType=VARCHAR}
+            </if>
+            <if test="user_id != null and user_id != ''">
+                and user_id = #{user_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserList" resultType="com.lnlic.technic.domain.SysUser" parameterType="java.util.HashMap">
+        SELECT
+        *
+        FROM SYS_USER a
+        <if test="org_id != null and org_id != ''">
+            INNER JOIN sys_org_user b ON a.user_id = b.user_id
+        </if>
+        <where>
+            a.del_flag = 0
+            <if test="username != null and username != ''">
+                and a.username = #{username, jdbcType=VARCHAR}
+            </if>
+            <if test="org_id != null and org_id != ''">
+                and b.org_id = #{org_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+        <if test="sidx != null and sidx != ''">
+            order by ${sidx} ${sord}
+        </if>
+    </select>
+    <select id="getUserListCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        SELECT
+        count(1)
+        FROM SYS_USER a
+        <if test="org_id != null and org_id != ''">
+            INNER JOIN sys_org_user b ON a.user_id = b.user_id
+        </if>
+        <where>
+            a.del_flag = 0
+            <if test="username != null and username != ''">
+               and a.username = #{username, jdbcType=VARCHAR}
+            </if>
+            <if test="org_id != null and org_id != ''">
+                and b.org_id = #{org_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

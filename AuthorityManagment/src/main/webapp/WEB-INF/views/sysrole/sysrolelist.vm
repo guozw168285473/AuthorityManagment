@@ -1,0 +1,185 @@
+#set($layout = "layout/default.vm")
+<script>
+
+	var layer,table,form;
+	$(document).ready(function() {
+
+
+
+        layui.use(['table', 'layer', 'form'], function() {
+			var table = layui.table, layer=layui.layer, form=layui.form;
+
+
+            table.render({
+                elem: '#layTable',
+                height: 'full-20',
+                url: '#springUrl('')/sysrole/getsysrolelist',
+                toolbar: '#toolbar',
+            	method:'POST',   //laui 修改请求方式
+//				request: {
+//                		pageName: 'pageNo', //页码的参数名称，默认：page
+//                        limitName: 'pageSize' //每页数据量的参数名，默认：limit
+//            	},
+				response: {
+							statusName: 'code', //数据状态的字段名称，默认：code
+							statusCode: 200, //规定成功的状态码，默认是0
+							msgName: 'hint', //规定状态信息的字段名称，默认是msg
+							countName: 'totalCount',//数据总数的字段名称，默认：count
+							dataName: 'rows' //数据列表的字段名称，默认：data
+
+				},
+//				limit:10,  //默认十条数据一页
+//				limits:[1,10,20,30,50],  //数据分页条
+            	page: false, //开启分页, 也可以像下面这样传入一个对象
+
+//				page: {
+//					limit: 10,
+//					limits: [1, 10, 20, 30],
+//					curr: 1
+//				},
+				cols: [[ //表头
+                    {type: 'checkbox', fixed: 'left'},
+					{field: 'role_id', title: 'role_id', hide: true},
+					{field: 'role_name', title: '角色名称', align: 'center'},
+					{field: 'role_description', title: '角色描述', align: 'center'},
+					{field: 'role_status', title: '角色状态', align: 'center', templet: function(res) {
+						var role_status = res.role_status;
+						var role_id = res.role_id;
+						var content = '';
+						if (role_status == 0) {//角色状态 0-启用 1-未启用
+							content = "<input type='checkbox' title='启用' value='"+role_id+"' lay-filter='role_status' checked>";
+						} else if (role_status == 1) {
+							content = "<input type='checkbox' title='启用' value='"+role_id+"' lay-filter='role_status' >";
+						}
+						return content;
+				}},
+					{field: 'create_time', title: '创建时间', align: 'center'},
+					{field: 'remark', title: '备注', align: 'center'},
+            	]],
+				even: true,//斑马线效果
+				where: {}//请求的参数
+
+        	});
+
+
+            //监听角色启用操作
+            form.on('checkbox(role_status)', function(obj){
+                var role_id = this.value;
+                var role_status = obj.elem.checked ? 0 : 1;
+                jQuery.post("#springUrl('')/sysrole/updatesysrole", {role_status: role_status, role_id: role_id}, function(data) {
+                    data = JSON.parse(data);
+                    layer.msg(data.msg, {icon: data.code});
+
+                })
+            });
+
+            //监听头部工具栏按钮
+            table.on('toolbar(filter-layTable)', function(obj) {
+                var checkedStatus = table.checkStatus("layTable");
+                var checkedData = checkedStatus.data;//获取选中行的数据
+                switch (obj.event) {
+
+                    case "add":
+
+						add();
+
+                        break;
+                    case "edit":
+                        if (checkedData.length != 1) {
+                            layer.msg("选择一条记录", {icon: 2});
+                        } else {
+                            var role_id = checkedData[0].role_id;
+                            edit(role_id);
+                        }
+                        break;
+                    case "permsConfig":
+                        if (checkedData.length != 1) {
+                            layer.msg("选择一条记录", {icon: 2});
+                        } else {
+                            var role_id = checkedData[0].role_id;
+                            permsConfig(role_id);
+                        }
+                        break;
+
+                }
+            })
+        })
+
+
+    })
+
+    //新增
+    function add() {
+
+        layer.open({
+            title: "添加角色",
+            type: 2,//iframe层
+            area: ['600px', '350px'],
+            shade: 0.3,
+            shadeClose: true, //点击遮罩层关闭
+            maxmin: true,//最大最小花
+            content: "#springUrl('')/sysrole/edit"
+
+        })
+
+    }
+
+    //编辑
+    function edit(role_id) {
+
+        layer.open({
+            title: "编辑角色",
+            type: 2,//iframe层
+            area: ['600px', '350px'],
+            shade: 0.3,
+            shadeClose: true, //点击遮罩层关闭
+            maxmin: true,//最大最小花
+            content: "#springUrl('')/sysrole/edit?role_id=" + role_id,
+        })
+
+    }
+
+    //权限配置
+    function permsConfig(role_id) {
+
+        layer.open({
+            title: "权限配置",
+            type: 2,//iframe层
+            area: ['280px', '550px'],
+            shade: 0.3,
+            shadeClose: true, //点击遮罩层关闭
+            maxmin: true,//最大最小花
+            content: "#springUrl('')/sysrole/permsconfig?role_id=" + role_id,
+            btn: ['确定', '关闭'],
+            yes: function(index, layero) {//index:当前层索引 layero:当前层DOM对象
+                var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+                iframeWin.submit();
+            },
+            btn2: function() {
+            }
+        })
+
+    }
+
+
+</script>
+<style>
+	/*解决table中的checkbox不居中选中的问题*/
+    .layui-table-cell .layui-form-checkbox[lay-skin="primary"]{
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>
+<body>
+
+<table id="layTable" lay-filter="filter-layTable"></table>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon ">&#xe654;</i>新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="edit"><i class="layui-icon ">&#xe642;</i>编辑</button>
+##        <button class="layui-btn layui-btn-sm" lay-event="del"><i class="layui-icon ">&#xe640;</i>删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="permsConfig"><i class="layui-icon ">&#xe672;</i>权限配置</button>
+    </div>
+</script>
+</body>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Font Awesome Icon Picker plugin for Bootstrap</title>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="dist/css/fontawesome-iconpicker.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="input-group">
+        <span class="input-group-addon"></span>
+        <input data-placement="bottomLeft" class="form-control icp icp-auto" value="fa-archive" type="text" />
+    </div>
+
+    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="dist/js/fontawesome-iconpicker.js"></script>
+    <script>
+        $(function () {
+            $('.icp-auto').iconpicker();
+        });
+    </script>
+</body>
+
+</html>

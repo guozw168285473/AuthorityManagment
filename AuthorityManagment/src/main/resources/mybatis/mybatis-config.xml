@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//sqlmap.sqlmap.mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--方言，采用oracle-->
+    <properties>
+        <property name="dialect" value="ORACLE"/>
+    </properties>
+
+
+    <mappers>
+        <mapper resource="mybatis/sqlmap/SysUser.xml"/>
+        <mapper resource="mybatis/sqlmap/SysRole.xml"/>
+        <mapper resource="mybatis/sqlmap/SysMenu.xml"/>
+        <mapper resource="mybatis/sqlmap/SysOrg.xml"/>
+    </mappers>
+</configuration>

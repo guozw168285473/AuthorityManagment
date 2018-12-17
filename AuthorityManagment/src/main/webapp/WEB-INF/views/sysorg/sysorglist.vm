@@ -1,0 +1,172 @@
+#set($layout = "layout/default.vm")
+
+<script>
+    var layer;
+	$(document).ready(function() {
+        var isFold = true;//是否折叠
+        layui.config({
+            base: "#springUrl('')/statics/js/treetable-lay/"
+        }).extend({
+            treetable: 'treetable'
+        }).use(['treetable', 'form'], function () {
+            var treetable = layui.treetable;
+            var form = layui.form;
+            layer = layui.layer;
+            var table = layui.table;
+
+            treetable.render({
+                treeColIndex: 2,          // 树形图标（箭头和文件夹、文件的图标）显示在第几列， 索引值是cols数组的下标。
+                treeSpid: 0,             // 最上级的父级id
+                treeIdName: 'org_id',       // id字段的名称
+                treePidName: 'parent_org_id',     // pid字段的名称
+                treeDefaultClose: true,   // 是否默认折叠
+                treeLinkage: true,        // 父级展开时是否自动展开所有子级
+                elem: '#layTable',
+                method:'POST',//post请求无效，源码用的是get请求，需要用post的话要修改源码
+                toolbar: '#toolbar_btns',
+                url: "#springUrl('')/sysorg/getsysorglist",
+                cols: [[
+//                    {type: 'numbers'},
+                    {type: 'checkbox'},
+                    {field: 'org_id', title: 'org_id', hide: true},
+                    {field: 'org_name', title: '部门名称', minWidth: 200},
+
+                    {field: 'fzr', title: '负责人'},
+                    {field: 'lxdh', title: '联系电话'},
+                    {field: 'email', title: '邮箱'},
+                    {field: 'org_status', title: '部门状态', maxWidth: 50, templet: function(res) {
+                        var org_status = res.org_status;
+                        var org_id = res.org_id;
+                        var content = "";
+                        if (org_status == 0) {//角色状态 0-启用 1-未启用
+                            content = "<input type='checkbox' title='启用' value='"+org_id+"' lay-filter='org_status' checked>";
+                        } else if (org_status == 1) {
+                            content = "<input type='checkbox' title='启用' value='"+org_id+"' lay-filter='org_status' >";
+                        }
+                        return content;
+                    }},
+                    {field: 'create_time', title: '创建时间'},
+                    {field: 'remark', title: '备注'},
+                    {field: '', title: '操作', toolbar: '#operate_btns', maxWidth: 50}
+                ]],
+                done: function() {
+
+                }
+            });
+
+            //监听菜单启用操作
+            form.on('checkbox(org_status)', function(obj){
+                var org_id = this.value;
+                var org_status = obj.elem.checked ? 0 : 1; //部门状态 0-启用 1-未启用
+                jQuery.post("#springUrl('')/sysorg/updatesysorg", {org_status: org_status, org_id: org_id}, function(data) {
+                    data = JSON.parse(data);
+                    layer.msg(data.msg, {icon: data.code});
+
+                })
+            });
+
+            //监听头部工具栏按钮
+            table.on('toolbar(filter-layTable)', function(obj) {
+                var checkedStatus = table.checkStatus("layTable");
+                var checkedData = checkedStatus.data;//获取选中行的数据
+                switch (obj.event) {
+                    //展开/折叠
+                    case "expandOrFold":
+                        if (isFold) {
+                            treetable.expandAll('#layTable');
+                            isFold = false;
+                        } else {
+                            treetable.foldAll('#layTable');
+                            isFold = true;
+                        }
+                        break;
+                    case "add":
+                        add();
+                        break;
+                    case "edit":
+
+                        if (checkedData.length != 1) {
+                            layer.msg("选择一条编辑", {icon: 3});
+                        } else {
+                            var org_id = checkedData[0].org_id;
+                            edit(org_id);
+                        }
+
+                        break;
+                }
+            });
+
+            //监听操作行按钮
+            table.on('tool(filter-layTable)', function(obj) {
+                var data = obj.data;//获取当前行数据
+                var org_id = data.org_id;
+//                alert(org_id);
+                switch (obj.event) {
+                    case "add":
+                        add();
+                        break;
+                    case "edit":
+                        edit(org_id);
+                        break;
+                }
+
+            })
+
+        });
+
+
+
+
+    })
+
+
+    //新增
+    function add() {
+
+        layer.open({
+            title: "新增部门",
+            type: 2,//iframe层
+            area: ['700px', '500px'],
+            shade: 0.3,
+            shadeClose: true, //点击遮罩层关闭
+            maxmin: true,//最大最小花
+            content: "#springUrl('')/sysorg/edit"
+
+        })
+
+    }
+
+    //编辑
+    function edit(org_id) {
+
+        layer.open({
+            title: "编辑部门",
+            type: 2,//iframe层
+            area: ['700px', '500px'],
+            shade: 0.3,
+            shadeClose: true, //点击遮罩层关闭
+            maxmin: true,//最大最小花
+            content: "#springUrl('')/sysorg/edit?org_id=" + org_id,
+        })
+
+    }
+</script>
+<body>
+
+<table id="layTable" class="layui-table" lay-filter="filter-layTable"></table>
+
+<script type="text/html" id="toolbar_btns">
+    <div class="layui-btn-container layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon ">&#xe654;</i>新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="edit"><i class="layui-icon ">&#xe642;</i>编辑</button>
+##        <button class="layui-btn layui-btn-sm" lay-event="del"><i class="layui-icon ">&#xe640;</i>删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="expandOrFold"><i class="layui-icon "></i>展开/折叠</button>
+    </div>
+</script>
+<script type="text/html" id="operate_btns">
+    <div class="layui-btn-group">
+        <button class="layui-btn  layui-btn-xs layui-btn-primary" lay-event="add"><i class="layui-icon">&#xe654;</i></button>
+        <button class="layui-btn  layui-btn-xs layui-btn-primary" lay-event="edit"><i class="layui-icon">&#xe642;</i></button>
+    </div>
+</script>
+</body>

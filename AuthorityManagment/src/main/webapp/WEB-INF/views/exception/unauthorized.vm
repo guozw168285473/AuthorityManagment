@@ -1,0 +1,2 @@
+#set($layout = "layout/empty.vm")
+无权限访问

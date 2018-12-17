@@ -1,0 +1,178 @@
+#set($layout = "layout/default.vm")
+<script>
+    var layer, form;
+	$(document).ready(function() {
+
+        if (GetQuery("menu_id")) {
+            initForm()
+        }
+
+
+        layui.use(['form', 'layer'], function() {
+            form = layui.form;
+            layer = layui.layer;
+
+            //渲染
+            form.render();
+        })
+
+        //监听菜单类型
+        form.on('radio(menu_type)', function(data) {
+
+            var value = data.value;
+            showOrHide(value);
+        })
+
+        //监听菜单状态开关
+        form.on('checkbox(menu_status)', function(data) {
+            this.value = this.checked ? 0 : 1;
+        })
+
+        $("#parent_menu_name").click(function() {
+            var mylayer = layer.open({
+                title: "请选择上级菜单",
+                type: 2,//iframe层
+                area: ['300px', '450px'],
+                shade: 0.3,
+                shadeClose: true, //点击遮罩层关闭
+                maxmin: true,//最大最小花
+                content: "#springUrl('')/sysmenu/sysmenudtree",
+                btn: ['确定', '关闭'],
+                yes: function(index, layero) {//index:当前层索引 layero:当前层DOM对象
+
+                    layer.close(index);
+                },
+                btn2: function() {
+                }
+            })
+        })
+
+
+        //监听表单提交
+        form.on('submit(go)', function(data) {
+            var params = data.field;//当前容器的全部表单字段，名值对形式：{name: value}
+            params.menu_id = GetQuery("menu_id");
+            params.menu_status = $("#menu_status").val();
+            jQuery.post("#springUrl('')/sysmenu/updatesysmenu", params, function(data) {
+                data = JSON.parse(data);
+                layer.msg(data.msg, {icon: data.code});
+                setTimeout(function() {
+                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                    parent.location.reload();//刷新父页面
+                }, 500)
+
+            })
+            return false;//非常重要，一定要添加，阻止表单跳转
+        })
+    })
+
+    function initForm() {
+        var menu_type = '$!sysmenu.menu_type' ? '$!sysmenu.menu_type' : 0;
+        var menu_status = '$!sysmenu.menu_status';
+
+        showOrHide(menu_type);
+        $("#parent_id").val('$sysmenu.parent_id');
+        $("#parent_menu_name").val('$!sysmenu.parent_id' == '0' ? "系统菜单" : '$!sysmenu.parent_menu_name');
+        $("[name='menu_type'][value='"+menu_type+"']").prop("checked", "checked");
+        if (menu_status == 1) {
+            $("#menu_status").prop("checked", false);
+            $("#menu_status").val(menu_status);
+        }
+        $("input[name='menu_name']").val('$!sysmenu.menu_name');
+        $("input[name='url_addr']").val('$!sysmenu.url_addr');
+        $("input[name='perms']").val('$!sysmenu.perms');
+        $("input[name='order_num']").val('$!sysmenu.order_num');
+        $("input[name='menu_icon']").val('$!sysmenu.menu_icon');
+        $("input[name='remark']").val('$!sysmenu.remark');
+    }
+
+    function showOrHide(value) {
+        if (value == 0) {
+            $("#menu_icon").removeClass('layui-hide');
+            $("#url_addr").addClass('layui-hide');
+            $("#perms").addClass('layui-hide');
+        } else if (value == 1) {
+            $("#menu_icon").addClass('layui-hide');
+            $("#url_addr").removeClass('layui-hide');
+            $("#perms").removeClass('layui-hide');
+        } else if (value == 2) {
+            $("#menu_icon").addClass('layui-hide');
+            $("#perms").removeClass('layui-hide');
+            $("#url_addr").addClass('layui-hide');
+        }
+    }
+</script>
+<body>
+
+<form class="layui-form layui-form-pane" style="padding: 30px 10%;">
+    <input type="hidden" name="parent_id" id="parent_id" value="0">
+    <div class="layui-form-item">
+        <label class="layui-form-label ">上级菜单</label>
+        <div class="layui-input-block ">
+            <input type="text" id="parent_menu_name"  lay-verify="required" autocomplete="off" placeholder="请选择上级菜单" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label ">菜单类型</label>
+        <div class="layui-input-block">
+            <input type="radio" lay-filter="menu_type" name="menu_type" value="0" title="目录" checked>
+            <input type="radio" lay-filter="menu_type" name="menu_type" value="1" title="菜单">
+            <input type="radio" lay-filter="menu_type" name="menu_type" value="2" title="按钮">
+        </div>
+    </div>
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-inline" >
+            <input type="checkbox" id="menu_status" value="0" name="menu_status" lay-filter="menu_status" title="启用" checked>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label ">菜单名称</label>
+        <div class="layui-input-block ">
+            <input type="text" name="menu_name" lay-verify="required" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide" id="url_addr">
+        <label class="layui-form-label ">请求地址</label>
+        <div class="layui-input-block ">
+            <input type="text" name="url_addr" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide" id="perms">
+        <label class="layui-form-label ">权限标识</label>
+        <div class="layui-input-block ">
+            <input type="text" name="perms" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label ">显示排序</label>
+        <div class="layui-input-block ">
+            <input type="text" name="order_num" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" id="menu_icon">
+        <label class="layui-form-label ">菜单图标</label>
+        <div class="layui-input-block ">
+            <input type="text"  name="menu_icon" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" >
+        <label class="layui-form-label ">菜单备注</label>
+        <div class="layui-input-block ">
+            <input type="text" name="remark" lay-verify="" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="go">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+
+
+</body>

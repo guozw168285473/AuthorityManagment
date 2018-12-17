@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lnlic.technic.dao.SysMenuDao">
+
+    <insert id="addSysMenu" parameterType="com.lnlic.technic.domain.SysMenu">
+        INSERT INTO sys_menu(MENU_ID,
+                MENU_NAME,
+                PARENT_ID,
+                ORDER_NUM,
+                URL_ADDR,
+                MENU_TYPE,
+                MENU_STATUS,
+                PERMS,
+                MENU_ICON,
+                CREATE_TIME,
+                UPDATE_TIME,
+                REMARK) VALUES
+                (#{menu_id, jdbcType=VARCHAR},
+                 #{menu_name, jdbcType=VARCHAR},
+                 #{parent_id, jdbcType=VARCHAR},
+                 #{order_num, jdbcType=INTEGER},
+                 #{url_addr, jdbcType=VARCHAR},
+                 #{menu_type, jdbcType=VARCHAR},
+                 #{menu_status, jdbcType=CHAR},
+                 #{perms, jdbcType=VARCHAR},
+                 #{menu_icon, jdbcType=VARCHAR},
+                  SYSDATE, SYSDATE, #{remark, jdbcType=VARCHAR}
+                 )
+    </insert>
+    <insert id="addRoleMenu" parameterType="java.util.HashMap">
+        INSERT INTO sys_role_menu(role_id, menu_id) VALUES (#{role_id, jdbcType=VARCHAR}, #{menu_id, jdbcType=VARCHAR})
+    </insert>
+    <update id="updateSysMenu" parameterType="com.lnlic.technic.domain.SysMenu">
+        update sys_menu
+        <trim prefix="set" suffixOverrides=",">
+            <if test="parent_id != null and parent_id != ''">
+                parent_id = #{parent_id, jdbcType=VARCHAR},
+            </if>
+            <if test="menu_type != null and menu_type != ''">
+                menu_type = #{menu_type, jdbcType=INTEGER},
+            </if>
+            <if test="menu_status != null and menu_status != ''">
+                menu_status = #{menu_status, jdbcType=VARCHAR},
+            </if>
+            <if test="menu_name != null and menu_name != ''">
+                menu_name = #{menu_name, jdbcType=VARCHAR},
+            </if>
+            <if test="url_addr != null and url_addr != ''">
+                url_addr = #{url_addr, jdbcType=VARCHAR},
+            </if>
+            <if test="order_num != null and order_num != ''">
+                order_num = #{order_num, jdbcType=INTEGER},
+            </if>
+            <if test="menu_icon != null and menu_icon != ''">
+                menu_icon = #{menu_icon, jdbcType=VARCHAR},
+            </if>
+            <if test="perms != null and perms != ''">
+                perms = #{perms, jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark, jdbcType=VARCHAR},
+            </if>
+            <if test="1 == 1">
+                update_time = sysdate,
+            </if>
+
+        </trim>
+        WHERE menu_id = #{menu_id, jdbcType=VARCHAR}
+    </update>
+
+    <!--获取用户下的菜单-->
+    <select id="getMenuList" resultType="com.lnlic.technic.domain.SysMenu" parameterType="java.util.HashMap">
+        select c.*
+      from sys_user a, sys_role b, sys_menu c, sys_role_user d, sys_role_menu e
+     where a.user_id = d.user_id
+       and b.role_id = d.role_id
+       and c.menu_id = e.menu_id
+       and b.role_id = e.role_id and c.menu_status = 0
+        <if test="username != null and username != ''">
+            and a.username = #{username, jdbcType=VARCHAR}
+        </if>
+        <if test="menu_type_list != null and menu_type_list != ''">
+            and c.menu_type in
+            <foreach collection="menu_type_list" index="index" item="menu_type" open="(" separator="," close=")">
+               #{menu_type, jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by c.menu_type, c.order_num
+    </select>
+
+    <!--获取所有菜单-->
+    <select id="getMenuList2nd" parameterType="com.lnlic.technic.domain.SysMenu" resultType="com.lnlic.technic.domain.SysMenu">
+        SELECT a.*, '0' checkArr FROM sys_menu a
+        order by a.menu_type, a.order_num
+    </select>
+
+    <select id="getSysMenuObj" parameterType="com.lnlic.technic.domain.SysMenu" resultType="com.lnlic.technic.domain.SysMenu">
+        select a.*, (select menu_name from sys_menu b where a.parent_id = b.menu_id) parent_menu_name from sys_menu a
+        <where>
+            <if test="menu_id != null and menu_id != ''">
+                a.menu_id = #{menu_id, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
